@@ -1,0 +1,32 @@
+.home-container {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+.welcome-card {
+  text-align: center;
+  padding: 30px 20px;
+}
+
+.welcome-card mat-card-title {
+  font-size: 32px;
+  margin-bottom: 20px;
+  color: rgb(84, 25, 247);
+}
+
+.welcome-text {
+  font-size: 18px;
+  margin-bottom: 35px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.action-buttons button {
+  min-width: 200px;
+}

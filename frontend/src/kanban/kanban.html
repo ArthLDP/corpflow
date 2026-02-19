@@ -1,0 +1,139 @@
+<div class="kanban-container">
+  <div class="kanban-header">
+    <h1>Kanban Board</h1>
+    <button mat-raised-button color="primary" (click)="toggleForm()">
+      <mat-icon>add</mat-icon>
+      {{ showForm ? 'Cancel' : 'New Task' }}
+    </button>
+  </div>
+
+  @if(showForm) {
+    <mat-card class="task-form-card">
+      <mat-card-content>
+        <form [formGroup]="taskForm" (ngSubmit)="addTask()">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Task Title</mat-label>
+            <input matInput formControlName="title" placeholder="Enter task title">
+            @if (taskForm.get('title')?.hasError('required')) {
+              <mat-error>
+                Title is required
+              </mat-error>
+            }
+          </mat-form-field>
+  
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Description</mat-label>
+            <textarea matInput formControlName="description" rows="3" placeholder="Enter task description"></textarea>
+            @if (taskForm.get('description')?.hasError('required')) {
+              <mat-error>
+                Description is required
+              </mat-error>
+            }
+          </mat-form-field>
+  
+          <div class="form-actions">
+            <button mat-raised-button color="primary" type="submit" [disabled]="!taskForm.valid">
+              Add Task
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  }
+
+
+  <div class="board">
+    <div class="column">
+      <div class="column-header todo-header">
+        <h2>
+          <mat-icon>assignment</mat-icon>
+          Todo
+        </h2>
+        <span class="task-count">{{ todoTasks.length }}</span>
+      </div>
+      <div
+        cdkDropList
+        #todoList="cdkDropList"
+        [cdkDropListData]="todoTasks"
+        [cdkDropListConnectedTo]="[executingList, finishedList]"
+        class="task-list"
+        (cdkDropListDropped)="drop($event)">
+        @for (task of todoTasks; track $index) {
+          <mat-card cdkDrag class="task-card">
+            <mat-card-content>
+              <div class="task-header">
+                <h3>{{ task.title }}</h3>
+                <button mat-icon-button (click)="deleteTask(todoTasks, task)" class="delete-btn">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+              <p>{{ task.description }}</p>
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+    </div>
+
+    <div class="column">
+      <div class="column-header executing-header">
+        <h2>
+          <mat-icon>hourglass_empty</mat-icon>
+          Executing
+        </h2>
+        <span class="task-count">{{ executingTasks.length }}</span>
+      </div>
+      <div
+        cdkDropList
+        #executingList="cdkDropList"
+        [cdkDropListData]="executingTasks"
+        [cdkDropListConnectedTo]="[todoList, finishedList]"
+        class="task-list"
+        (cdkDropListDropped)="drop($event)">
+        @for (task of executingTasks; track $index) {
+          <mat-card cdkDrag class="task-card">
+            <mat-card-content>
+              <div class="task-header">
+                <h3>{{ task.title }}</h3>
+                <button mat-icon-button (click)="deleteTask(executingTasks, task)" class="delete-btn">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+              <p>{{ task.description }}</p>
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+    </div>
+
+    <div class="column">
+      <div class="column-header finished-header">
+        <h2>
+          <mat-icon>check_circle</mat-icon>
+          Finished
+        </h2>
+        <span class="task-count">{{ finishedTasks.length }}</span>
+      </div>
+      <div
+        cdkDropList
+        #finishedList="cdkDropList"
+        [cdkDropListData]="finishedTasks"
+        [cdkDropListConnectedTo]="[todoList, executingList]"
+        class="task-list"
+        (cdkDropListDropped)="drop($event)">
+        @for (task of finishedTasks; track $index) {
+          <mat-card cdkDrag class="task-card">
+            <mat-card-content>
+              <div class="task-header">
+                <h3>{{ task.title }}</h3>
+                <button mat-icon-button (click)="deleteTask(finishedTasks, task)" class="delete-btn">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+              <p>{{ task.description }}</p>
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+    </div>
+  </div>
+</div>
