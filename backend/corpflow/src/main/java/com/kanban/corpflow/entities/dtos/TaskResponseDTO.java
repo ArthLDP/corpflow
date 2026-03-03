@@ -1,37 +1,32 @@
-package com.kanban.corpflow.entities;
+package com.kanban.corpflow.entities.dtos;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.kanban.corpflow.entities.Task;
 import com.kanban.corpflow.entities.enums.TaskStatus;
-import jakarta.persistence.*;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
-@Entity
-@Table(name = "tb_task")
-public class Task implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class TaskResponseDTO {
     private Long id;
     private String title;
     private String description;
     private TaskStatus status;
+    @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
     private LocalDateTime deadLine;
+    @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
     private LocalDateTime createdAt;
-    @ManyToOne
-    @JoinColumn(name = "userId", nullable = false)
-    private User user;
+    private Long userId;
 
-    public Task(){}
+    public TaskResponseDTO(){}
 
-    public Task(Long id, String title, String description, TaskStatus status, LocalDateTime deadLine, LocalDateTime createdAt, User user) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.status = status;
-        this.deadLine = deadLine;
-        this.createdAt = createdAt;
-        this.user = user;
+    public TaskResponseDTO(Task task) {
+        id = task.getId();
+        title = task.getTitle();
+        description = task.getDescription();
+        status = task.getStatus();
+        deadLine = task.getDeadLine();
+        createdAt = task.getCreatedAt();
+        userId = task.getUser().getId();
     }
 
     public Long getId() {
@@ -82,23 +77,11 @@ public class Task implements Serializable {
         this.createdAt = createdAt;
     }
 
-    public User getUser() {
-        return user;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        Task task = (Task) o;
-        return Objects.equals(id, task.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(id);
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }

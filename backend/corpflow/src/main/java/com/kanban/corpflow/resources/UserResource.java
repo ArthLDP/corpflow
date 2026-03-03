@@ -1,6 +1,7 @@
 package com.kanban.corpflow.resources;
 
-import com.kanban.corpflow.entities.User;
+import com.kanban.corpflow.entities.dtos.UserRequestDTO;
+import com.kanban.corpflow.entities.dtos.UserResponseDTO;
 import com.kanban.corpflow.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,32 +18,33 @@ public class UserResource {
     private UserService userService;
 
     @PostMapping
-    public ResponseEntity<User> create(@RequestBody User user) {
-        User createdUser = userService.create(user);
+    public ResponseEntity<UserResponseDTO> create(@RequestBody UserRequestDTO userRequestDTO) {
+        UserResponseDTO createdUserResponseDTO = userService.create(userRequestDTO);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}").buildAndExpand(createdUser.getId()).toUri();
+                .path("/{id}").buildAndExpand(createdUserResponseDTO.getId()).toUri();
 
-        return ResponseEntity.created(uri).body(createdUser);
+        return ResponseEntity.created(uri).body(createdUserResponseDTO);
     }
 
     @GetMapping
-    public ResponseEntity<List<User>> findAll() {
+    public ResponseEntity<List<UserResponseDTO>> findAll() {
         return ResponseEntity.ok().body(userService.findAll());
     }
 
     @GetMapping(value = "{id}")
-    public ResponseEntity<User> findById(@PathVariable Long id) {
+    public ResponseEntity<UserResponseDTO> findById(@PathVariable Long id) {
         return ResponseEntity.ok().body(userService.findById(id));
     }
 
     @PutMapping(value = "{id}")
-    public ResponseEntity<User> update(@PathVariable Long id, @RequestBody User user) {
-        return ResponseEntity.ok().body(userService.update(id, user));
+    public ResponseEntity<UserResponseDTO> update(@PathVariable Long id, @RequestBody UserRequestDTO userRequestDTO) {
+        return ResponseEntity.ok().body(userService.update(id, userRequestDTO));
     }
 
     @DeleteMapping(value = "{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         userService.delete(id);
+
         return ResponseEntity.noContent().build();
     }
 }

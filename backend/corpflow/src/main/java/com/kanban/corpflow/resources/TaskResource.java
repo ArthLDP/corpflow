@@ -1,6 +1,7 @@
 package com.kanban.corpflow.resources;
 
-import com.kanban.corpflow.entities.Task;
+import com.kanban.corpflow.entities.dtos.TaskRequestDTO;
+import com.kanban.corpflow.entities.dtos.TaskResponseDTO;
 import com.kanban.corpflow.services.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,31 +18,33 @@ public class TaskResource {
     private TaskService taskService;
 
     @PostMapping
-    public ResponseEntity<Task> create(@RequestBody Task task) {
-        Task createdTask = taskService.create(task);
+    public ResponseEntity<TaskResponseDTO> create(@RequestBody TaskRequestDTO taskRequestDTO) {
+        TaskResponseDTO createdTaskResponseDTO = taskService.create(taskRequestDTO);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}").buildAndExpand(createdTask.getId()).toUri();
-        return ResponseEntity.created(uri).body(createdTask);
+                .path("/{id}").buildAndExpand(createdTaskResponseDTO.getId()).toUri();
+
+        return ResponseEntity.created(uri).body(createdTaskResponseDTO);
     }
 
     @GetMapping()
-    public ResponseEntity<List<Task>> findAll() {
+    public ResponseEntity<List<TaskResponseDTO>> findAll() {
         return ResponseEntity.ok().body(taskService.findAll());
     }
 
     @GetMapping(value = "{id}")
-    public ResponseEntity<Task> findById(@PathVariable Long id) {
+    public ResponseEntity<TaskResponseDTO> findById(@PathVariable Long id) {
         return ResponseEntity.ok().body(taskService.findById(id));
     }
 
     @PutMapping(value = "{id}")
-    public ResponseEntity<Task> update(@PathVariable Long id, @RequestBody Task task) {
-        return ResponseEntity.ok().body(taskService.update(id, task));
+    public ResponseEntity<TaskResponseDTO> update(@PathVariable Long id, @RequestBody TaskRequestDTO taskRequestDTO) {
+        return ResponseEntity.ok().body(taskService.update(id, taskRequestDTO));
     }
 
     @DeleteMapping(value = "{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         taskService.delete(id);
+
         return ResponseEntity.noContent().build();
     }
 }
