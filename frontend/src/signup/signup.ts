@@ -7,6 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { User, UserService } from '../services/userService';
 
 @Component({
     selector: 'app-signup',
@@ -26,7 +27,7 @@ export class Signup {
     signupForm: FormGroup;
     hidePassword = true;
 
-    constructor(private fb: FormBuilder, private router: Router, private snackBar: MatSnackBar) {
+    constructor(private fb: FormBuilder, private router: Router, private snackBar: MatSnackBar, private userService: UserService) {
         this.signupForm = this.fb.group({
             name: ["", [Validators.required]],
             email: ["", [Validators.required, Validators.email]],
@@ -35,18 +36,34 @@ export class Signup {
     }
 
     onSubmit() {
-        if (this.signupForm.valid) {
-            const userData = this.signupForm.value;
-            console.log("Signup data:", userData);
-
-            this.snackBar.open("Account created successfully!", "Close", {
-                duration: 5000,
-                horizontalPosition: 'center',
-                verticalPosition: 'top'
-            });
-
-            this.router.navigate(["/"]);
+        if (this.signupForm.invalid) {
+            return;
         }
+
+        const user = this.signupForm.value as User;
+
+        console.log("Signup data:", user);
+
+        this.userService.createUser(user).subscribe({
+            next: (res) => {
+                this.snackBar.open("Account created successfully!", "Close", {
+                    duration: 5000,
+                    horizontalPosition: 'center',
+                    verticalPosition: 'top'
+                });
+
+                this.router.navigate(["/"]);
+            },
+            error: (err) => {
+                this.snackBar.open("Server error", "Close", {
+                    duration: 5000,
+                    horizontalPosition: 'center',
+                    verticalPosition: 'top'
+                });
+
+                console.error(err);
+            }
+        });
     }
     togglePasswordVisibility() {
         this.hidePassword = !this.hidePassword;
