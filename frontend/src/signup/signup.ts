@@ -9,18 +9,18 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
-  selector: 'app-signup',
-  imports: [
-    ReactiveFormsModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatIconModule,
-    MatSnackBarModule
-  ],
-  templateUrl: './signup.html',
-  styleUrl: './signup.css',
+    selector: 'app-signup',
+    imports: [
+        ReactiveFormsModule,
+        MatCardModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        MatIconModule,
+        MatSnackBarModule
+    ],
+    templateUrl: './signup.html',
+    styleUrl: './signup.css',
 })
 export class Signup {
     signupForm: FormGroup;
@@ -38,13 +38,13 @@ export class Signup {
         if (this.signupForm.valid) {
             const userData = this.signupForm.value;
             console.log("Signup data:", userData);
-            
+
             this.snackBar.open("Account created successfully!", "Close", {
                 duration: 5000,
                 horizontalPosition: 'center',
                 verticalPosition: 'top'
             });
-            
+
             this.router.navigate(["/"]);
         }
     }

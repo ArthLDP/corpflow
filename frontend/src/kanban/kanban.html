@@ -30,7 +30,32 @@
               </mat-error>
             }
           </mat-form-field>
-  
+
+          <mat-form-field>
+            <mat-label>Deadline date:</mat-label>
+            <input matInput formControlName="deadlineDate" [matDatepicker]="datePicker" [min]="minDate">
+             @if (taskForm.get('deadlineDate')?.hasError) {
+              <mat-error>
+                Invalid deadline date
+              </mat-error>
+            }
+            <mat-hint>DD/MM/YYYY</mat-hint>
+            <mat-datepicker-toggle matIconSuffix [for]="datePicker"></mat-datepicker-toggle>
+            <mat-datepicker #datePicker></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Deadline time:</mat-label>
+            <input matInput formControlName="deadlineTime" [matTimepicker]="timePicker">
+            @if (taskForm.get('deadlineTime')?.hasError) {
+              <mat-error>
+                Invalid deadline time
+              </mat-error>
+            }
+            <mat-timepicker-toggle matIconSuffix [for]="timePicker"/>
+            <mat-timepicker #timePicker/>
+          </mat-form-field>
+          
           <div class="form-actions">
             <button mat-raised-button color="primary" type="submit" [disabled]="!taskForm.valid">
               Add Task
@@ -67,7 +92,8 @@
                   <mat-icon>delete</mat-icon>
                 </button>
               </div>
-              <p>{{ task.description }}</p>
+              <p class="task-description">{{ task.description }}</p>
+              <b>Deadline: {{ task.deadlineText }}</b>
             </mat-card-content>
           </mat-card>
         }
@@ -98,7 +124,8 @@
                   <mat-icon>delete</mat-icon>
                 </button>
               </div>
-              <p>{{ task.description }}</p>
+              <p class="task-description">{{ task.description }}</p>
+              <b>Deadline: {{ task.deadlineText }}</b>
             </mat-card-content>
           </mat-card>
         }
@@ -129,7 +156,8 @@
                   <mat-icon>delete</mat-icon>
                 </button>
               </div>
-              <p>{{ task.description }}</p>
+              <p class="task-description">{{ task.description }}</p>
+              <b>Deadline: {{ task.deadlineText }}</b>
             </mat-card-content>
           </mat-card>
         }

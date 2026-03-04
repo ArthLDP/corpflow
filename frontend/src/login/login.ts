@@ -9,18 +9,18 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
-  selector: 'app-login',
-  imports: [
-    ReactiveFormsModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatIconModule,
-    MatSnackBarModule
-  ],
-  templateUrl: './login.html',
-  styleUrl: './login.css',
+    selector: 'app-login',
+    imports: [
+        ReactiveFormsModule,
+        MatCardModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        MatIconModule,
+        MatSnackBarModule
+    ],
+    templateUrl: './login.html',
+    styleUrl: './login.css',
 })
 export class Login {
     loginForm: FormGroup;
@@ -37,13 +37,13 @@ export class Login {
         if (this.loginForm.valid) {
             const userData = this.loginForm.value;
             console.log("login data:", userData);
-            
+
             this.snackBar.open("Login successfully!", "Close", {
                 duration: 5000,
                 horizontalPosition: 'center',
                 verticalPosition: 'top'
             });
-            
+
             this.router.navigate(["/"]);
         }
     }
