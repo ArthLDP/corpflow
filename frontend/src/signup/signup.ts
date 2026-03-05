@@ -7,7 +7,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { User, UserService } from '../services/userService';
+import { User } from '../services/userService';
+import { UserAuthService } from '../services/userAuthService';
 
 @Component({
     selector: 'app-signup',
@@ -27,7 +28,7 @@ export class Signup {
     signupForm: FormGroup;
     hidePassword = true;
 
-    constructor(private fb: FormBuilder, private router: Router, private snackBar: MatSnackBar, private userService: UserService) {
+    constructor(private fb: FormBuilder, private router: Router, private snackBar: MatSnackBar, private userAuthService: UserAuthService) {
         this.signupForm = this.fb.group({
             name: ["", [Validators.required]],
             email: ["", [Validators.required, Validators.email]],
@@ -44,7 +45,7 @@ export class Signup {
 
         console.log("Signup data:", user);
 
-        this.userService.createUser(user).subscribe({
+        this.userAuthService.registerUser(user).subscribe({
             next: (res) => {
                 this.snackBar.open("Account created successfully!", "Close", {
                     duration: 5000,
@@ -53,6 +54,7 @@ export class Signup {
                 });
 
                 this.router.navigate(["/"]);
+                console.log(res);
             },
             error: (err) => {
                 this.snackBar.open("Server error", "Close", {

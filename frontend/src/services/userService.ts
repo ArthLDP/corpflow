@@ -18,9 +18,4 @@ export class UserService {
     private apiUrl = `${environment.apiUrl}/users`;
 
     constructor(private http: HttpClient) {}
-
-    createUser(user: User): Observable<User> {
-        const headers = new HttpHeaders({'Content-Type': 'application/json'});
-        return this.http.post<User>(this.apiUrl, user, { headers });
-    }
 }
