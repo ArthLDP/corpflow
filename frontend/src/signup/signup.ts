@@ -7,8 +7,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { User } from '../services/userService';
 import { UserAuthService } from '../services/userAuthService';
+import { UserAuthRegisterRequest } from '../entities/userEntity';
 
 @Component({
     selector: 'app-signup',
@@ -41,9 +41,7 @@ export class Signup {
             return;
         }
 
-        const user = this.signupForm.value as User;
-
-        console.log("Signup data:", user);
+        const user = this.signupForm.value as UserAuthRegisterRequest;
 
         this.userAuthService.registerUser(user).subscribe({
             next: (res) => {
@@ -54,7 +52,6 @@ export class Signup {
                 });
 
                 this.router.navigate(["/"]);
-                console.log(res);
             },
             error: (err) => {
                 this.snackBar.open("Server error", "Close", {
