@@ -25,6 +25,11 @@ public class UserResource {
         return ResponseEntity.ok().body(userService.findById(id));
     }
 
+    @GetMapping(params = "email")
+    public ResponseEntity<UserResponseDTO> findByEmail(@RequestParam String email) {
+        return ResponseEntity.ok().body(userService.findByEmail(email));
+    }
+
     @PutMapping(value = "{id}")
     public ResponseEntity<UserResponseDTO> update(@PathVariable Long id, @RequestBody UserRequestDTO userRequestDTO) {
         return ResponseEntity.ok().body(userService.update(id, userRequestDTO));

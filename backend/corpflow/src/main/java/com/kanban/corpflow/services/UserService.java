@@ -27,6 +27,13 @@ public class UserService {
         return new UserResponseDTO(userFound);
     }
 
+    public UserResponseDTO findByEmail(String email) {
+        User userFound = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User with email: " + email + " not found"));
+
+        return new UserResponseDTO(userFound);
+    }
+
     public UserResponseDTO update(Long id, UserRequestDTO user) {
         User entity = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User with id: " + id + " not found"));

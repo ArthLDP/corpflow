@@ -13,10 +13,15 @@ public class Task implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(nullable = false)
     private String title;
+    @Column(nullable = false)
     private String description;
+    @Column(nullable = false)
     private TaskStatus status;
+    @Column(nullable = false)
     private LocalDateTime deadLine;
+    @Column(nullable = false)
     private LocalDateTime createdAt;
     @ManyToOne
     @JoinColumn(name = "userId", nullable = false)
