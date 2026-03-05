@@ -14,16 +14,6 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public UserResponseDTO create(UserRequestDTO userRequestDTO) {
-        User user = new User();
-        user.setName(userRequestDTO.getName());
-        user.setEmail(userRequestDTO.getEmail());
-        user.setPassword(userRequestDTO.getPassword());
-        User createdUser = userRepository.save(user);
-
-        return new UserResponseDTO(createdUser);
-    }
-
     public List<UserResponseDTO> findAll() {
         List<User> allUsers = userRepository.findAll();
 

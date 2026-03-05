@@ -6,9 +6,7 @@ import com.kanban.corpflow.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
 import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:4200")
@@ -17,15 +15,6 @@ import java.util.List;
 public class UserResource {
     @Autowired
     private UserService userService;
-
-    @PostMapping
-    public ResponseEntity<UserResponseDTO> create(@RequestBody UserRequestDTO userRequestDTO) {
-        UserResponseDTO createdUserResponseDTO = userService.create(userRequestDTO);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}").buildAndExpand(createdUserResponseDTO.getId()).toUri();
-
-        return ResponseEntity.created(uri).body(createdUserResponseDTO);
-    }
 
     @GetMapping
     public ResponseEntity<List<UserResponseDTO>> findAll() {
