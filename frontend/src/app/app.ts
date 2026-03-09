@@ -1,8 +1,9 @@
-import { Component, signal } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
+import { UserAuthService } from '../services/userAuthService';
 
 @Component({
   selector: 'app-root',
@@ -17,5 +18,15 @@ import { MatIconModule } from '@angular/material/icon';
   styleUrl: './app.css'
 })
 export class App {
-  protected readonly title = signal('corpflow');
+    constructor(private userAuthService: UserAuthService){}
+
+    protected readonly title = signal('corpflow');
+
+    isUserAuthenticated(): boolean {
+        return this.userAuthService.isAuthenticated();
+    }
+
+    logout() {
+        this.userAuthService.logout();
+    }
 }

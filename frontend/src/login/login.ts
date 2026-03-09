@@ -41,15 +41,7 @@ export class Login {
 
             this.userAuthService.loginUser(user).subscribe({
                 next: (res) => {
-                    this.snackBar.open("Account created successfully!", "Close", {
-                        duration: 5000,
-                        horizontalPosition: 'center',
-                        verticalPosition: 'top'
-                    });
-
                     this.userAuthService.saveToken(res.token);
-
-                    this.router.navigate(["/"]);
                 },
                 error: (err) => {
                     this.snackBar.open("Server error", "Close", {

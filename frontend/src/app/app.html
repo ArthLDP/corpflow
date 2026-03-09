@@ -12,14 +12,23 @@
         <mat-icon matListItemIcon>person_add</mat-icon>
         <span matListItemTitle>Sign Up</span>
       </a>
-      <a mat-list-item routerLink="/login">
-        <mat-icon matListItemIcon>login</mat-icon>
-        <span matListItemTitle>Login</span>
-      </a>
-      <a mat-list-item routerLink="/kanban">
-        <mat-icon matListItemIcon>dashboard</mat-icon>
-        <span matListItemTitle>Kanban</span>
-      </a>
+      @if (isUserAuthenticated()) {
+          <a mat-list-item routerLink="/kanban">
+            <mat-icon matListItemIcon>dashboard</mat-icon>
+            <span matListItemTitle>Kanban</span>
+          </a>
+
+          <button mat-button color="primary" (click)="logout()">
+            <mat-icon>logout</mat-icon>
+            Logout
+          </button>
+      }
+      @else {
+          <a mat-list-item routerLink="/login">
+            <mat-icon matListItemIcon>login</mat-icon>
+            <span matListItemTitle>Login</span>
+          </a>
+      }
     </mat-nav-list>
   </mat-drawer>
 
