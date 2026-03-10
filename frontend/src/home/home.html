@@ -1,17 +1,18 @@
 <div class="home-container">
   @if(isUserAuthenticated()) {
-    <mat-card class="card">
-      <mat-card-header>
-        <mat-card-title>You are logged in</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <div class="action-buttons">
-          <button mat-raised-button color="accent" routerLink="/kanban">
-            Get Started - Access Kanban page
-          </button>
-        </div>
-      </mat-card-content>
-    </mat-card>
+    <div class="user-welcome">
+      <mat-card class="user-card">
+        <h1>Welcome {{ userName() }} !</h1>
+        <h3>Now you have access to Kanban page.</h3>
+        <mat-card-content>
+          <div class="action-buttons">
+            <button mat-raised-button color="accent" routerLink="/kanban">
+              Access Kanban page
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
   }
   @else {
     <mat-card class="card">

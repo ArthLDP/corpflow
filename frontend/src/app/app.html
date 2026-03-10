@@ -18,10 +18,16 @@
             <span matListItemTitle>Kanban</span>
           </a>
 
-          <button mat-button color="primary" (click)="logout()">
-            <mat-icon>logout</mat-icon>
-            Logout
-          </button>
+          <div class="logout">
+            <div class="user-info">
+              <mat-icon>person</mat-icon>
+              <span>{{ userName() }}</span>
+            </div>
+            <button matButton="filled" (click)="logout()">
+                <mat-icon>logout</mat-icon>
+                Logout
+            </button>
+          </div>
       }
       @else {
           <a mat-list-item routerLink="/login">

@@ -12,7 +12,6 @@ export interface UserAuthRegisterRequest {
 }
 
 export interface UserAuthLoginRequest {
-    name: string;
     email: string;
     password: string;
 }

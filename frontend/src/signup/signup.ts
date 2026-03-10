@@ -7,7 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { UserAuthService } from '../services/userAuthService';
+import { UserService } from '../services/userService';
 import { UserAuthRegisterRequest } from '../entities/userEntity';
 
 @Component({
@@ -28,7 +28,7 @@ export class Signup {
     signupForm: FormGroup;
     hidePassword = true;
 
-    constructor(private fb: FormBuilder, private router: Router, private snackBar: MatSnackBar, private userAuthService: UserAuthService) {
+    constructor(private fb: FormBuilder, private router: Router, private snackBar: MatSnackBar, private userService: UserService) {
         this.signupForm = this.fb.group({
             name: ["", [Validators.required]],
             email: ["", [Validators.required, Validators.email]],
@@ -43,7 +43,7 @@ export class Signup {
 
         const user = this.signupForm.value as UserAuthRegisterRequest;
 
-        this.userAuthService.registerUser(user).subscribe({
+        this.userService.registerUser(user).subscribe({
             next: (res) => {
                 this.snackBar.open("Account created successfully!", "Close", {
                     duration: 5000,

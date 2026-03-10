@@ -3,7 +3,8 @@ import { RouterLink, RouterOutlet } from '@angular/router';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
-import { UserAuthService } from '../services/userAuthService';
+import { UserService } from '../services/userService';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-root',
@@ -12,21 +13,31 @@ import { UserAuthService } from '../services/userAuthService';
     RouterLink,
     MatSidenavModule,
     MatListModule,
-    MatIconModule
+    MatIconModule,
+    MatButtonModule
   ],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class App {
-    constructor(private userAuthService: UserAuthService){}
+    constructor(private userService: UserService){}
 
     protected readonly title = signal('corpflow');
 
     isUserAuthenticated(): boolean {
-        return this.userAuthService.isAuthenticated();
+        return this.userService.isAuthenticated();
     }
 
     logout() {
-        this.userAuthService.logout();
+        this.userService.logout();
+    }
+
+    userName(): string {
+        const user = this.userService.currentUserSignal();
+
+        if (user) {
+            return user.name;
+        }
+        return "";
     }
 }

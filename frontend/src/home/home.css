@@ -30,3 +30,25 @@
 .action-buttons button {
   min-width: 200px;
 }
+
+.user-welcome {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+.user-card {
+  width: 500px;
+  padding: 10px 40px;
+}
+
+.user-card h1 {
+  font-size: 2em;
+  text-transform: capitalize;
+}
+
+.user-card .action-buttons {
+  margin-top: 16px;
+}

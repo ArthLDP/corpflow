@@ -26,6 +26,26 @@ mat-nav-list a {
   border-radius: 4px;
 }
 
+mat-nav-list .logout {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  justify-content: center;
+}
+
+mat-nav-list .logout .user-info {
+  display: flex;
+  font-size: 1.2rem;
+  align-items: center;
+  margin: 15px;
+  gap: 17px;
+  text-transform: capitalize;
+}
+
+button {
+  border-radius: 4px;
+}
+
 .app-content {
   display: flex;
   flex-direction: column;
