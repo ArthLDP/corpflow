@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CdkDragDrop, DragDropModule, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { MatCardModule } from '@angular/material/card';
@@ -11,16 +11,13 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatTimepickerModule } from '@angular/material/timepicker';
+import { MatSelectModule } from '@angular/material/select';
 import dayjs from 'dayjs';
-
-interface Task {
-    id: number;
-    title: string;
-    description: string;
-    deadlineDate: Date;
-    deadlineTime: Date;
-    deadlineText: string;
-}
+import { Task } from '../entities/taskEntity';
+import { TaskStatus } from '../entities/enums/taskStatus';
+import { User } from '../entities/userEntity';
+import { UserService } from '../services/userService';
+import { TaskService } from '../services/taskService';
 
 @Component({
     selector: 'app-kanban',
@@ -36,118 +33,152 @@ interface Task {
         MatSnackBarModule,
         MatDatepickerModule,
         MatTimepickerModule,
-        MatNativeDateModule
+        MatNativeDateModule,
+        MatSelectModule
     ],
     templateUrl: './kanban.html',
     styleUrl: './kanban.css',
 })
 export class Kanban implements OnInit {
-    todoTasks: Task[] = [];
-    executingTasks: Task[] = [];
-    finishedTasks: Task[] = [];
-
     taskForm: FormGroup;
     showForm = false;
-    nextId = 1;
-    minDate: Date;
+    minDate = new Date();
+    allUsers: User[] = [];
+    tasks: Task[] = [];
+    TaskStatus = TaskStatus;
 
     constructor(
+        private userService: UserService,
+        private taskService: TaskService,
+        private snackBar: MatSnackBar,
         private fb: FormBuilder,
-        private snackBar: MatSnackBar
+        private cdr: ChangeDetectorRef
     ) {
         this.taskForm = this.fb.group({
             title: ['', Validators.required],
             description: ['', Validators.required],
             deadlineDate: ['', Validators.required],
-            deadlineTime: ['', Validators.required]
+            deadlineTime: ['', Validators.required],
+            userId: [null, Validators.required]
         });
-        this.minDate = new Date();
     }
 
-    ngOnInit() {
-        this.loadTasks();
+    get todoTasks(): Task[] {
+        return this.tasks.filter(t => t.status === TaskStatus.TODO);
     }
 
-    loadTasks() {
-        console.log("Beta test");
+    get executingTasks(): Task[] {
+        return this.tasks.filter(t => t.status === TaskStatus.EXECUTING);
     }
 
-    saveTasks() {
-        const tasks = {
-            todo: this.todoTasks,
-            executing: this.executingTasks,
-            finished: this.finishedTasks,
-            nextId: this.nextId
-        };
-
-        console.log(tasks);
+    get finishedTasks(): Task[] {
+        return this.tasks.filter(t => t.status === TaskStatus.FINISHED);
     }
 
-    toggleForm() {
+    ngOnInit(): void {
+        this.userService.getUsers().subscribe({
+            next: (res) => {
+                this.allUsers = [...res];
+                this.cdr.markForCheck();
+            },
+            error: (err) => console.error('Error fetching users:', err)
+        });
+
+        this.taskService.getAllTasks().subscribe({
+            next: (res) => {
+                this.tasks = [...res];
+                this.cdr.markForCheck();
+            },
+            error: (err) => console.error('Error fetching tasks:', err)
+        });
+    }
+
+    toggleForm(): void {
         this.showForm = !this.showForm;
         if (!this.showForm) {
             this.taskForm.reset();
         }
     }
 
-    addTask() {
-        if (this.taskForm.valid) {
-            let deadlineDate = new Date(this.taskForm.value.deadlineDate);
-            let deadlineTime = new Date(this.taskForm.value.deadlineTime);
-            
-            deadlineDate.setHours(deadlineTime.getHours());
-            deadlineDate.setMinutes(deadlineTime.getMinutes());
-            deadlineDate.setSeconds(deadlineTime.getSeconds());
-            deadlineDate.setMilliseconds(deadlineTime.getMilliseconds());
+    addTask(): void {
+        if (this.taskForm.invalid) return;
 
-            let deadlineText = dayjs(deadlineDate).format('DD/MM/YYYY HH:mm');
+        const { title, description, deadlineDate, deadlineTime, userId } = this.taskForm.value;
 
-            const newTask: Task = {
-                id: this.nextId++,
-                title: this.taskForm.value.title,
-                description: this.taskForm.value.description,
-                deadlineDate: this.taskForm.value.deadlineDate,
-                deadlineTime: this.taskForm.value.deadlineTime,
-                deadlineText: deadlineText
-            };
+        const deadLine = dayjs(deadlineDate)
+            .hour(dayjs(deadlineTime).hour())
+            .minute(dayjs(deadlineTime).minute())
+            .format('DD/MM/YYYY HH:mm');
 
-            this.todoTasks.push(newTask);
-            this.saveTasks();
-            this.taskForm.reset();
-            this.showForm = false;
+        const task: Task = {
+            title,
+            description,
+            status: TaskStatus.TODO,
+            deadLine,
+            userId
+        };
 
-            this.snackBar.open('Task added successfully!', 'Close', {
-                duration: 2000,
-                horizontalPosition: 'center',
-                verticalPosition: 'top'
-            });
-        }
+        this.taskService.createTask(task).subscribe({
+            next: (res) => {
+                this.tasks = [...this.tasks, res];
+                this.cdr.markForCheck();
+                this.taskForm.reset();
+                this.showForm = false;
+                this.snackBar.open('Task added successfully!', 'Close', {
+                    duration: 2000,
+                    horizontalPosition: 'center',
+                    verticalPosition: 'top'
+                });
+            },
+            error: (err) => console.error('Error creating task:', err)
+        });
     }
 
-    drop(event: CdkDragDrop<Task[]>) {
+    drop(event: CdkDragDrop<Task[]>): void {
         if (event.previousContainer === event.container) {
-            moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-        } else {
-            transferArrayItem(
-                event.previousContainer.data,
+            moveItemInArray(
                 event.container.data,
                 event.previousIndex,
                 event.currentIndex
             );
+        } else {
+            const task = event.previousContainer.data[event.previousIndex];
+            const newStatus = this.getStatusFromContainer(event.container.id);
+
+            if (newStatus !== undefined) {
+                task.status = newStatus;
+                this.taskService.updateTask(task).subscribe({
+                    next: () => {
+                        this.tasks = [...this.tasks];
+                        this.cdr.markForCheck();
+                    },
+                    error: (err) => console.error('Error updating task status:', err)
+                });
+            }
         }
-        this.saveTasks();
     }
 
-    deleteTask(list: Task[], task: Task) {
-        const index = list.indexOf(task);
-        if (index > -1) {
-            list.splice(index, 1);
-            this.saveTasks();
-            this.snackBar.open('Task deleted', 'Close', {
-                duration: 2000,
-                horizontalPosition: 'center',
-                verticalPosition: 'top'
-            });
-        }
+    private getStatusFromContainer(containerId: string): TaskStatus | undefined {
+        const map: Record<string, TaskStatus> = {
+            'todoList': TaskStatus.TODO,
+            'executingList': TaskStatus.EXECUTING,
+            'finishedList': TaskStatus.FINISHED,
+        };
+        return map[containerId];
+    }
+
+    deleteTask(task: Task): void {
+        this.taskService.deleteTask(task.id!).subscribe({
+            next: () => {
+                this.tasks = this.tasks.filter(t => t.id !== task.id);
+                this.cdr.markForCheck();
+                this.snackBar.open('Task deleted!', 'Close', {
+                    duration: 2000,
+                    horizontalPosition: 'center',
+                    verticalPosition: 'top'
+                });
+            },
+            error: (err) => console.error('Error deleting task:', err)
+        });
     }
 }

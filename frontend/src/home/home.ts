@@ -14,22 +14,8 @@ import { UserService } from '../services/userService';
     templateUrl: './home.html',
     styleUrl: './home.css',
 })
-export class Home implements OnInit {
+export class Home {
     constructor(private userService: UserService){}
-    ngOnInit(): void {
-        const token = this.userService.getToken();
-        if (token) {
-            const userEmail = this.userService.getUserEmailFromToken(token);
-            this.userService.getUserByEmail(userEmail).subscribe({
-                next: (res) => {
-                    this.userService.currentUserSignal.set(res);
-                },
-                error: (err) => {
-                    console.error(err);
-                }
-            })
-        }
-    }
 
     isUserAuthenticated(): boolean {
         return this.userService.isAuthenticated();

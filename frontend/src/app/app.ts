@@ -19,8 +19,23 @@ import { MatButtonModule } from '@angular/material/button';
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
-export class App {
+export class App implements OnInit {
     constructor(private userService: UserService){}
+    
+    ngOnInit(): void {
+        const token = this.userService.getToken();
+        if (token) {
+            const userEmail = this.userService.getUserEmailFromToken(token);
+            this.userService.getUserByEmail(userEmail).subscribe({
+                next: (res) => {
+                    this.userService.currentUserSignal.set(res);
+                },
+                error: (err) => {
+                    console.error(err);
+                }
+            })
+        }
+    }
 
     protected readonly title = signal('corpflow');
 

@@ -14,11 +14,10 @@ import { SsrCookieService } from "ngx-cookie-service-ssr";
 export class UserService {
     private registerApiUrl = `${environment.apiUrl}/auth/register`
     private loginApiUrl = `${environment.apiUrl}/auth/login`;
-    private getUserByEmailUrl = `${environment.apiUrl}/users`
-    private cookieService = inject(SsrCookieService);
+    private usersUrl = `${environment.apiUrl}/users`;
     currentUserSignal = signal<User | undefined | null>(undefined);
 
-    constructor(private http: HttpClient, private router: Router) {}
+    constructor(private http: HttpClient, private router: Router, private cookieService: SsrCookieService) {}
 
     registerUser(user: UserAuthRegisterRequest): Observable<UserTokenResponse> {
         const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
@@ -30,11 +29,15 @@ export class UserService {
         return this.http.post<UserTokenResponse>(this.loginApiUrl, user, { headers });
     }
 
+    getUsers(): Observable<User[]> {
+        return this.http.get<User[]>(this.usersUrl);
+    }
+
     getUserByEmail(email: string): Observable<User> {
         const params = new HttpParams()
         .set('email', email)
 
-        return this.http.get<User>(this.getUserByEmailUrl, { params });
+        return this.http.get<User>(this.usersUrl, { params });
     }
 
     saveToken(token: string) {

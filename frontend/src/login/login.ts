@@ -42,6 +42,15 @@ export class Login {
             this.userService.loginUser(user).subscribe({
                 next: (res) => {
                     this.userService.saveToken(res.token);
+                    const userEmail = this.userService.getUserEmailFromToken(res.token);
+                    this.userService.getUserByEmail(userEmail).subscribe({
+                        next: (res) => {
+                            this.userService.currentUserSignal.set(res);
+                        },
+                        error: (err) => {
+                            console.error(err);
+                        }
+                    })
                 },
                 error: (err) => {
                     this.snackBar.open("Server error", "Close", {

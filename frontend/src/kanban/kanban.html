@@ -2,166 +2,170 @@
   <div class="kanban-header">
     <h1>Kanban Board</h1>
     <button mat-raised-button color="primary" (click)="toggleForm()">
-      <mat-icon>add</mat-icon>
+      <mat-icon>{{ showForm ? 'close' : 'add' }}</mat-icon>
       {{ showForm ? 'Cancel' : 'New Task' }}
     </button>
   </div>
 
-  @if(showForm) {
+  @if (showForm) {
     <mat-card class="task-form-card">
       <mat-card-content>
         <form [formGroup]="taskForm" (ngSubmit)="addTask()">
+
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Task Title</mat-label>
             <input matInput formControlName="title" placeholder="Enter task title">
-            @if (taskForm.get('title')?.hasError('required')) {
-              <mat-error>
-                Title is required
-              </mat-error>
+            @if (taskForm.get('title')?.hasError('required') && taskForm.get('title')?.touched) {
+              <mat-error>Title is required</mat-error>
             }
           </mat-form-field>
-  
+
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Description</mat-label>
             <textarea matInput formControlName="description" rows="3" placeholder="Enter task description"></textarea>
-            @if (taskForm.get('description')?.hasError('required')) {
-              <mat-error>
-                Description is required
-              </mat-error>
+            @if (taskForm.get('description')?.hasError('required') && taskForm.get('description')?.touched) {
+              <mat-error>Description is required</mat-error>
             }
           </mat-form-field>
 
-          <mat-form-field>
-            <mat-label>Deadline date:</mat-label>
+          <mat-form-field appearance="outline">
+            <mat-label>Deadline Date</mat-label>
             <input matInput formControlName="deadlineDate" [matDatepicker]="datePicker" [min]="minDate">
-             @if (taskForm.get('deadlineDate')?.hasError) {
-              <mat-error>
-                Invalid deadline date
-              </mat-error>
-            }
             <mat-hint>DD/MM/YYYY</mat-hint>
             <mat-datepicker-toggle matIconSuffix [for]="datePicker"></mat-datepicker-toggle>
             <mat-datepicker #datePicker></mat-datepicker>
+            @if (taskForm.get('deadlineDate')?.hasError('required') && taskForm.get('deadlineDate')?.touched) {
+              <mat-error>Deadline date is required</mat-error>
+            }
           </mat-form-field>
 
-          <mat-form-field>
-            <mat-label>Deadline time:</mat-label>
+          <mat-form-field appearance="outline">
+            <mat-label>Deadline Time</mat-label>
             <input matInput formControlName="deadlineTime" [matTimepicker]="timePicker">
-            @if (taskForm.get('deadlineTime')?.hasError) {
-              <mat-error>
-                Invalid deadline time
-              </mat-error>
-            }
             <mat-timepicker-toggle matIconSuffix [for]="timePicker"/>
             <mat-timepicker #timePicker/>
+            @if (taskForm.get('deadlineTime')?.hasError('required') && taskForm.get('deadlineTime')?.touched) {
+              <mat-error>Deadline time is required</mat-error>
+            }
           </mat-form-field>
-          
+
+          <mat-form-field appearance="outline">
+            <mat-label>Assign to</mat-label>
+            <mat-select formControlName="userId">
+              @for (user of allUsers; track user.id) {
+                <mat-option [value]="user.id">{{ user.name }}</mat-option>
+              }
+            </mat-select>
+            @if (taskForm.get('userId')?.hasError('required') && taskForm.get('userId')?.touched) {
+              <mat-error>User is required</mat-error>
+            }
+          </mat-form-field>
+
           <div class="form-actions">
-            <button mat-raised-button color="primary" type="submit" [disabled]="!taskForm.valid">
+            <button mat-raised-button color="primary" type="submit" [disabled]="taskForm.invalid">
               Add Task
             </button>
           </div>
+
         </form>
       </mat-card-content>
     </mat-card>
   }
 
-
   <div class="board">
+
+    <!-- TODO -->
     <div class="column">
       <div class="column-header todo-header">
-        <h2>
-          <mat-icon>assignment</mat-icon>
-          Todo
-        </h2>
+        <h2><mat-icon>assignment</mat-icon> Todo</h2>
         <span class="task-count">{{ todoTasks.length }}</span>
       </div>
       <div
         cdkDropList
+        id="todoList"
         #todoList="cdkDropList"
         [cdkDropListData]="todoTasks"
         [cdkDropListConnectedTo]="[executingList, finishedList]"
         class="task-list"
         (cdkDropListDropped)="drop($event)">
-        @for (task of todoTasks; track $index) {
+        @for (task of todoTasks; track task.id) {
           <mat-card cdkDrag class="task-card">
             <mat-card-content>
               <div class="task-header">
                 <h3>{{ task.title }}</h3>
-                <button mat-icon-button (click)="deleteTask(todoTasks, task)" class="delete-btn">
+                <button mat-icon-button (click)="deleteTask(task)" class="delete-btn">
                   <mat-icon>delete</mat-icon>
                 </button>
               </div>
               <p class="task-description">{{ task.description }}</p>
-              <b>Deadline: {{ task.deadlineText }}</b>
+              <b>Deadline: {{ task.deadLine }}</b>
             </mat-card-content>
           </mat-card>
         }
       </div>
     </div>
 
+    <!-- EXECUTING -->
     <div class="column">
       <div class="column-header executing-header">
-        <h2>
-          <mat-icon>hourglass_empty</mat-icon>
-          Executing
-        </h2>
+        <h2><mat-icon>hourglass_empty</mat-icon> Executing</h2>
         <span class="task-count">{{ executingTasks.length }}</span>
       </div>
       <div
         cdkDropList
+        id="executingList"
         #executingList="cdkDropList"
         [cdkDropListData]="executingTasks"
         [cdkDropListConnectedTo]="[todoList, finishedList]"
         class="task-list"
         (cdkDropListDropped)="drop($event)">
-        @for (task of executingTasks; track $index) {
+        @for (task of executingTasks; track task.id) {
           <mat-card cdkDrag class="task-card">
             <mat-card-content>
               <div class="task-header">
                 <h3>{{ task.title }}</h3>
-                <button mat-icon-button (click)="deleteTask(executingTasks, task)" class="delete-btn">
+                <button mat-icon-button (click)="deleteTask(task)" class="delete-btn">
                   <mat-icon>delete</mat-icon>
                 </button>
               </div>
               <p class="task-description">{{ task.description }}</p>
-              <b>Deadline: {{ task.deadlineText }}</b>
+              <b>Deadline: {{ task.deadLine }}</b>
             </mat-card-content>
           </mat-card>
         }
       </div>
     </div>
 
+    <!-- FINISHED -->
     <div class="column">
       <div class="column-header finished-header">
-        <h2>
-          <mat-icon>check_circle</mat-icon>
-          Finished
-        </h2>
+        <h2><mat-icon>check_circle</mat-icon> Finished</h2>
         <span class="task-count">{{ finishedTasks.length }}</span>
       </div>
       <div
         cdkDropList
+        id="finishedList"
         #finishedList="cdkDropList"
         [cdkDropListData]="finishedTasks"
         [cdkDropListConnectedTo]="[todoList, executingList]"
         class="task-list"
         (cdkDropListDropped)="drop($event)">
-        @for (task of finishedTasks; track $index) {
+        @for (task of finishedTasks; track task.id) {
           <mat-card cdkDrag class="task-card">
             <mat-card-content>
               <div class="task-header">
                 <h3>{{ task.title }}</h3>
-                <button mat-icon-button (click)="deleteTask(finishedTasks, task)" class="delete-btn">
+                <button mat-icon-button (click)="deleteTask(task)" class="delete-btn">
                   <mat-icon>delete</mat-icon>
                 </button>
               </div>
               <p class="task-description">{{ task.description }}</p>
-              <b>Deadline: {{ task.deadlineText }}</b>
+              <b>Deadline: {{ task.deadLine }}</b>
             </mat-card-content>
           </mat-card>
         }
       </div>
     </div>
+
   </div>
 </div>
