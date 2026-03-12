@@ -30,7 +30,6 @@ CorpFlow is a Kanban-style task manager that lets teams create, assign, and trac
 | Frontend | Angular          |
 | Backend  | Java Spring      |
 | Database | MySQL            |
-| Build    | Maven (`pom.xml`)|
 
 ---
 
@@ -52,7 +51,6 @@ Before running the project, make sure you have the following installed:
 
 - [Node.js & npm](https://nodejs.org/)
 - [Java JDK](https://www.oracle.com/java/technologies/downloads/)
-- [Maven](https://maven.apache.org/)
 - [MySQL](https://www.mysql.com/)
 
 ### Clone the Repository
@@ -96,19 +94,6 @@ db.password=your_password
 ```
 
 3. Navigate to the `backend` folder. All dependencies are managed by Maven via `pom.xml`. Compile and run the application:
-
-```bash
-cd backend
-mvn spring-boot:run
-```
-
-> Alternatively, you can build the JAR and run it:
-> ```bash
-> mvn clean package
-> java -jar target/*.jar
-> ```
-
----
 
 ## Usage
 
