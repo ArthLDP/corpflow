@@ -58,7 +58,7 @@ export class Signup implements OnInit {
                 this.router.navigate(["/"]);
             },
             error: (err) => {
-                this.snackBar.open("Server error", "Close", {
+                this.snackBar.open(err.error.message, "Close", {
                     duration: 5000,
                     horizontalPosition: 'center',
                     verticalPosition: 'top'

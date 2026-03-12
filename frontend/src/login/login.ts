@@ -57,7 +57,7 @@ export class Login implements OnInit {
                     })
                 },
                 error: (err) => {
-                    this.snackBar.open("Server error", "Close", {
+                    this.snackBar.open(err.error.message, "Close", {
                         duration: 5000,
                         horizontalPosition: 'center',
                         verticalPosition: 'top'
