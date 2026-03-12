@@ -181,4 +181,11 @@ export class Kanban implements OnInit {
             error: (err) => console.error('Error deleting task:', err)
         });
     }
+
+    getUserNameFromUserId(userId: number): string {
+        const foundUser = this.allUsers.find(user => user.id === userId);
+
+        if (foundUser) return foundUser.name;
+        return "";
+    }
 }

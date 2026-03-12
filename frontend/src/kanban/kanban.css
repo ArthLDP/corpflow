@@ -102,6 +102,10 @@
   margin-bottom: 15px;
 }
 
+.task-card .task-user {
+  font-weight: 900;
+}
+
 .task-card:hover {
   box-shadow: 0 4px 12px gray;
 }

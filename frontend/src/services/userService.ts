@@ -15,18 +15,17 @@ export class UserService {
     private registerApiUrl = `${environment.apiUrl}/auth/register`
     private loginApiUrl = `${environment.apiUrl}/auth/login`;
     private usersUrl = `${environment.apiUrl}/users`;
+    private headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     currentUserSignal = signal<User | undefined | null>(undefined);
 
     constructor(private http: HttpClient, private router: Router, private cookieService: SsrCookieService) {}
 
     registerUser(user: UserAuthRegisterRequest): Observable<UserTokenResponse> {
-        const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-        return this.http.post<UserTokenResponse>(this.registerApiUrl, user, { headers });
+        return this.http.post<UserTokenResponse>(this.registerApiUrl, user, { headers: this.headers });
     }
 
     loginUser(user: UserAuthLoginRequest): Observable<UserTokenResponse> {
-        const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-        return this.http.post<UserTokenResponse>(this.loginApiUrl, user, { headers });
+        return this.http.post<UserTokenResponse>(this.loginApiUrl, user, { headers: this.headers });
     }
 
     getUsers(): Observable<User[]> {
