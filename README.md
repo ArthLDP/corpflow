@@ -87,12 +87,6 @@ The frontend will be available at **[http://localhost:4200](http://localhost:420
 
 2. Open `backend/src/main/resources/db.properties` and configure it with your MySQL credentials:
 
-```properties
-db.url=jdbc:mysql://localhost:3306/your_database_name
-db.username=your_username
-db.password=your_password
-```
-
 3. Navigate to the `backend` folder. All dependencies are managed by Maven via `pom.xml`. Compile and run the application:
 
 ## Usage
