@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -24,7 +24,7 @@ import { UserAuthRegisterRequest } from '../entities/userEntity';
     templateUrl: './signup.html',
     styleUrl: './signup.css',
 })
-export class Signup {
+export class Signup implements OnInit {
     signupForm: FormGroup;
     hidePassword = true;
 
@@ -34,6 +34,10 @@ export class Signup {
             email: ["", [Validators.required, Validators.email]],
             password: ["", [Validators.required]]
         });
+    }
+
+    ngOnInit(): void {
+        if (this.userService.isAuthenticated()) this.router.navigate(['/']);
     }
 
     onSubmit() {

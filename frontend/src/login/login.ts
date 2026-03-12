@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -24,7 +24,7 @@ import { UserService } from '../services/userService';
     templateUrl: './login.html',
     styleUrl: './login.css',
 })
-export class Login {
+export class Login implements OnInit {
     loginForm: FormGroup;
     hidePassword = true;
 
@@ -33,6 +33,10 @@ export class Login {
             email: ["", [Validators.required]],
             password: ["", [Validators.required]]
         });
+    }
+
+    ngOnInit(): void {
+        if (this.userService.isAuthenticated()) this.router.navigate(['/']);
     }
 
     onSubmit() {
